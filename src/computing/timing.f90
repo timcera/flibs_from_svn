@@ -17,6 +17,8 @@
 !       - minimum and maximum "real" time intervals
 !         for a single iteration
 !
+!     $Id: timing.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module timing
     implicit none
 

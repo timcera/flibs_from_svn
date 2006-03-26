@@ -2,6 +2,8 @@
 !     Program illustrating the use of several types of lists
 !     in one program
 !
+!     $Id: two_lists.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 ! Convenience module, holding all the data types
 !
 module DATA_MODULE

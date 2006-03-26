@@ -14,6 +14,8 @@
 !     are designed to minimize mistakes (for instance: using
 !     = instead of =>)
 !
+!     $Id: binarytree.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 ! Define the binary-tree data type
 !
 type BINARY_TREE

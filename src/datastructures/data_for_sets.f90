@@ -11,6 +11,8 @@
 !     The using code must declare the type SET_DATA and
 !     the logical function element_isequal
 !
+!     $Id: data_for_sets.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 type VECTOR_DATA
     type(SET_DATA) :: data
 endtype

@@ -9,6 +9,8 @@
 !     the underlying data structure for the
 !     sets.
 !
+!     $Id: test_sets.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module MYDATA_MODULE
 
 !

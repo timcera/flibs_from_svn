@@ -1,6 +1,8 @@
 ! test_dict.f90 --
 !     Test program for dictionaries
 !
+!     $Id: test_dict.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module MYDATA_MODULE
 
 !

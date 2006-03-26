@@ -20,6 +20,8 @@
 !     - Put both in a separate module, that
 !       will be used.
 !
+!     $Id: dictionary.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 type LIST_DATA
     character(len=DICT_KEY_LENGTH) :: key
     type(DICT_DATA)                :: value

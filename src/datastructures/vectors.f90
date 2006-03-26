@@ -13,6 +13,8 @@
 !     Note:
 !     For the function vector_at() we need a parameter
 !     that represents the "empty vector data" value.
+!
+!     $Id: vectors.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
 
 type VECTOR
     private

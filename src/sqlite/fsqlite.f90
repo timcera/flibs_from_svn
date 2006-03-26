@@ -29,6 +29,8 @@
 !    With the appropriate compilation options (if needed)
 !    the code should be thread-safe, as no data are shared.
 !
+!    $Id: fsqlite.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module sqlite_types
 
    integer, parameter         :: dp = kind(1.0d00)

@@ -20,6 +20,7 @@
 !     - this file to define the SET data type itself.
 !     The test/example program shows how to use them.
 !
+!     $Id: sets.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
 
 !
 ! Make everything private, except what we want to
