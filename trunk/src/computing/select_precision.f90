@@ -6,6 +6,8 @@
 !
 !     wp: kind for working precision (set to either sp or dp)
 !
+!     $Id: select_precision.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module select_precision
     implicit none
 

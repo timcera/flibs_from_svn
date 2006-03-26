@@ -15,6 +15,8 @@
 !  A replace-string routine does not seem very useful, one
 !  can create it by combining the delete and insert functions
 !
+!  $Id: textstr.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module edit_text
    implicit none
 contains

@@ -5,6 +5,8 @@
 !     (character classes are not supported). A backslash escapes
 !     any character.
 !
+!     $Id: globmatch.f90,v 1.5 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module glob_matching
     implicit none
 

@@ -1,6 +1,8 @@
 ! test_list.f90 --
 !     Test program for linked lists
 !
+!     $Id: test_list.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module MYDATA_MODULE
 
 type MYDATA

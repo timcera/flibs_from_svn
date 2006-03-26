@@ -1,5 +1,7 @@
 /* csqlite.c --
       C wrappers callable from Fortran for the SQLite library
+
+      $Id: csqlite.c,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
 */
 #ifdef WIN32
 #define FTNCALL __stdcall

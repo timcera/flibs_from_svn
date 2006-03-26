@@ -8,6 +8,8 @@
 !    - All lines after that contain the name of the station
 !      the date and the two values.
 !
+!    $Id: csvtable.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 program csvtable
    use sqlite
 

@@ -12,6 +12,8 @@
 !     The functions actually perform fairly simple string manipulations.
 !     It is just that these manipulations occur frequently.
 !
+!     $Id: filedir.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 module filedir
     implicit none
 

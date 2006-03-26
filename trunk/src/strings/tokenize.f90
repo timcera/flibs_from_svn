@@ -19,6 +19,8 @@
 ! gaps, what tokens do you expect? A and B or A, "", "" and B?)
 ! therefore they should not both be used in the same tokenizer.
 !
+! $Id: tokenize.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 
 ! TOKENIZE --
 !    Module for tokenizing strings

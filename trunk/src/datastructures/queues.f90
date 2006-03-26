@@ -7,6 +7,8 @@
 !     data are inserted at the end and retrieved from the
 !     top.
 !
+!     $Id: queues.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!
 type QUEUE_STRUCT
     logical                                 :: full
     integer                                 :: start
