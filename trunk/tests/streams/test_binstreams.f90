@@ -1,6 +1,6 @@
 ! Test program for binary streams
 !
-!     $Id: test_binstreams.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!     $Id: test_binstreams.f90,v 1.3 2006-06-23 08:04:13 arjenmarkus Exp $
 !
 program test_binstream
     use binary_streams
@@ -11,7 +11,7 @@ program test_binstream
     logical             :: error
     character(len=3)    :: char
 
-    call binstream_open( stream, 10, 'teat_binstream.inp', error )
+    call binstream_open( stream, 10, 'test_binstream.inp', error )
 
     if ( error ) then
         write(*,*) 'Problem opening the file!'
