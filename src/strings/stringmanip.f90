@@ -8,7 +8,7 @@
 !     The functions actually perform fairly simple string manipulations.
 !     It is just that these manipulations occur frequently.
 !
-!     $Id: stringmanip.f90,v 1.1 2006-06-22 04:11:35 arjenmarkus Exp $
+!     $Id: stringmanip.f90,v 1.2 2006-06-23 08:04:13 arjenmarkus Exp $
 !
 module string_manipulation
     implicit none
@@ -57,12 +57,12 @@ function string_toupper( string ) result (new)
     length = len(string)
     new    = string
     do i = 1,length
-        k = index( string(i:i), lower )
+        k = index( lower, string(i:i) )
         if ( k > 0 ) then
            new(i:i) = upper(k:k)
         endif
     enddo
-end function string_upper
+end function string_toupper
 
 ! string_tolower --
 !     Return a string that has all _letters_ in lower case
@@ -83,7 +83,7 @@ function string_tolower( string ) result (new)
     length = len(string)
     new    = string
     do i = 1,length
-        k = index( string(i:i), upper )
+        k = index( upper, string(i:i) )
         if ( k > 0 ) then
            new(i:i) = lower(k:k)
         endif
