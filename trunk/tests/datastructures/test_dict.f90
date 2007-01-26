@@ -1,7 +1,7 @@
 ! test_dict.f90 --
 !     Test program for dictionaries
 !
-!     $Id: test_dict.f90,v 1.2 2006-03-26 19:03:53 arjenmarkus Exp $
+!     $Id: test_dict.f90,v 1.3 2007-01-26 09:56:44 arjenmarkus Exp $
 !
 module MYDATA_MODULE
 
@@ -25,6 +25,7 @@ end module
 
 module MYDATA_DICTS
     use MYDATA_MODULE, DICT_DATA => MYDATA
+    implicit none
 
     include "dictionary.f90"
 end module MYDATA_DICTS
@@ -67,6 +68,18 @@ program test_dict
     !
     call dict_delete_key( dict, "P" )
     write(*,*) 'Still has "P"? ', dict_has_key(dict, 'P' )
+
+    !
+    ! Adding a few longer keys
+    !
+    call dict_add_key( dict, "Piano", data )
+    call dict_add_key( dict, "Piano2", data )
+    call dict_add_key( dict, "Piano-forte is long ", data )
+    !                         12345678901234567890
+    write(*,*) 'Has key "Piano"? ', dict_has_key(dict, 'Piano' )
+    write(*,*) 'Has key "Piano2"? ', dict_has_key(dict, 'Piano2' )
+    write(*,*) 'Has key "Piano-forte is long "? ', &
+        dict_has_key(dict, 'Piano-forte is long ' )
     !
     ! Destroy the dictionary
     !
