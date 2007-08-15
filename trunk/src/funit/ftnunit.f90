@@ -1,4 +1,3 @@
-! DEPRECATED - see funit.f90 instead
 ! ftnunit.f90 --
 !     Module that implements part of the "ftnunit" framework:
 !     It is inspired by the well-known JUnit framework for
@@ -16,7 +15,7 @@
 !     runtests.sh
 !     runtests.tcl
 !
-!     $Id: funit.f90,v 1.2 2007-08-15 19:09:33 arjenmarkus Exp $
+!     $Id: ftnunit.f90,v 1.1 2007-08-15 19:09:33 arjenmarkus Exp $
 !
 module ftnunit
     implicit none
