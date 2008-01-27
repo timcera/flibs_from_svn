@@ -25,7 +25,7 @@
 !     To illustrate the way run-time errors are handled via
 !     the framework, some of these tests result in runtime errors
 !
-!     $Id: test_ftnunit.f90,v 1.1 2007-08-15 19:09:33 arjenmarkus Exp $
+!     $Id: test_ftnunit.f90,v 1.2 2008-01-27 09:08:31 arjenmarkus Exp $
 !
 module data_processing
     implicit none
@@ -319,11 +319,14 @@ program dataproc
 ! The routine test_all runs all unit tests
 ! (see the dataproc_testing module)
 !
+    call runtests_init
     call runtests( test_all )
+    call runtests_final
 
 !
 ! Ordinary processing
 !
+    write(*,*) 'Ordinary processing ...'
     call open_files
     call process_data( nodata, vmean, vmin, vmax )
     call report_results( nodata, vmean, vmin, vmax )
