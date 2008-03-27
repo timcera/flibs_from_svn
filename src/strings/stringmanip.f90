@@ -9,7 +9,7 @@
 !     The functions actually perform fairly simple string manipulations.
 !     It is just that these manipulations occur frequently.
 !
-!     $Id: stringmanip.f90,v 1.3 2008-03-25 05:23:36 arjenmarkus Exp $
+!     $Id: stringmanip.f90,v 1.4 2008-03-27 20:07:25 arjenmarkus Exp $
 !
 module string_manipulation
     implicit none
@@ -215,6 +215,7 @@ subroutine string_map( string, substr, replace )
             start = start + k - 1
             call string_delete( string, start, len(substr) )
             call string_insert( string, start, replace )
+            start = start + len(replace)
         else
             exit
         endif
