@@ -13,7 +13,7 @@
 !   The functions actually perform fairly simple string manipulations.
 !   It is just that these manipulations occur frequently.
 !
-!   $Id: m_filedir.f90,v 1.1 2008-04-04 08:46:26 relaxmike Exp $
+!   $Id: m_filedir.f90,v 1.2 2008-04-04 10:16:29 relaxmike Exp $
 !
 module m_filedir
   use m_platform, only : &
@@ -695,8 +695,11 @@ contains
   !
   ! filedir_error --
   !   Manage an error for the filedir module
+  ! Arguments :
+  !   origin : the name of the subroutine/function which generated the error.
+  !   message : the message to display
   !
-  subroutine filedir_error ( origin , message)
+  subroutine filedir_error ( origin , message )
     character(len=*), intent(in) :: origin
     character(len=*), intent(in) :: message
     write(6,*) "Internal error from: ", origin
