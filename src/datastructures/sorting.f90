@@ -13,7 +13,7 @@
 !     Algorithm translated from Kernighan and Pike,
 !     The Practice of Programming.
 !
-!     $Id: sorting.f90,v 1.1 2008-04-15 04:24:34 arjenmarkus Exp $
+!     $Id: sorting.f90,v 1.2 2008-04-15 19:19:40 arjenmarkus Exp $
 !
 
 !
@@ -39,8 +39,8 @@ subroutine qsort_array( array, compare )
     integer, dimension(:), allocatable         :: order
     integer                                    :: i
 
-    allocate( backup(1:size(array) )
-    allocate( order(1:size(array) )
+    allocate( backup(1:size(array)) )
+    allocate( order(1:size(array)) )
 
     do i = 1,size(order)
         order(i) = i
