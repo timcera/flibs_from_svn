@@ -59,6 +59,9 @@
 !        write(6,*) "No problem, continue."
 !     end select
 !
+! Copyright (c) 2008 Michael Baudin
+!
+! $Id: m_exception.f90,v 1.3 2008-05-06 08:40:56 relaxmike Exp $
 !
 module m_exception
   implicit none
