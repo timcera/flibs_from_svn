@@ -14,7 +14,7 @@
 !     For the function vector_at() we need a parameter
 !     that represents the "empty vector data" value.
 !
-!     $Id: vectors.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
+!     $Id: vectors.f90,v 1.4 2008-06-12 15:12:39 relaxmike Exp $
 
 type VECTOR
     private
@@ -23,10 +23,16 @@ type VECTOR
 end type VECTOR
 
 private
-public :: VECTOR, VECTOR_DATA
-public :: vector_create, vector_append, vector_at, &
-          vector_size, vector_put, vector_delete_elements, &
-          vector_destroy, vector_insert_empty
+public :: VECTOR
+public :: VECTOR_DATA
+public :: vector_create
+public :: vector_append
+public :: vector_at
+public :: vector_size
+public :: vector_put
+public :: vector_delete_elements
+public :: vector_destroy
+public :: vector_insert_empty
 
 real, parameter :: growth_rate = 1.1
 
