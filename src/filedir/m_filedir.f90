@@ -189,10 +189,10 @@
 ! Compiler : gfortran
 ! _FS_RENAME_SUBROUTINE
 !
-! Copyright (c) 2008 Arjen Markus
-! Copyright (c) 2008 Michael Baudin
+! Copyright (c) 2008 Arjen Markus arjenmarkus@sourceforge.net
+! Copyright (c) 2008 Michael Baudin michael.baudin@gmail.com
 !
-!   $Id: m_filedir.f90,v 1.4 2008-05-06 10:28:33 relaxmike Exp $
+!   $Id: m_filedir.f90,v 1.5 2008-06-12 14:58:41 relaxmike Exp $
 !
 module m_filedir
 #ifdef _FS_INTEL_FORTRAN_PORTABILITY_ROUTINES
