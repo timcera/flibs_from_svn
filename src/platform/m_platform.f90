@@ -80,9 +80,10 @@
 ! _PLATFORM_STAT_FUNCTION
 ! _PLATFORM_SYSTEM_FUNCTION
 !
-! Copyright (c) 2008 Michael Baudin
+! Copyright (c) 2008 Arjen Markus arjenmarkus@sourceforge.net
+! Copyright (c) 2008 Michael Baudin michael.baudin@gmail.com
 !
-! $Id: m_platform.f90,v 1.5 2008-05-06 08:39:18 relaxmike Exp $
+! $Id: m_platform.f90,v 1.6 2008-06-12 15:00:13 relaxmike Exp $
 !
 module m_platform
 #ifdef _PLATFORM_INTEL_FORTRAN_PORTABILITY_ROUTINES
