@@ -1,7 +1,7 @@
 ! test_m_exception.f90 --
 !     Small test program for the m_exception component.
 !
-!     $Id: test_m_exception.f90,v 1.1 2008-04-08 09:06:53 relaxmike Exp $
+!     $Id: test_m_exception.f90,v 1.2 2008-06-18 10:36:11 relaxmike Exp $
 !
 program test_m_exception
   use m_exception, only : &
@@ -43,12 +43,28 @@ contains
     integer :: status
     external :: callback1
     external :: callback2
+    real :: root
+    interface 
+       function compute_sqrt ( value ) result ( root )
+         implicit none
+         real, intent(in) :: value
+         real :: root
+       end function compute_sqrt
+    end interface
     call log_startup ( "test_m_exception.log" )
     call assert_startup ( )
     !
     ! Configure the exception so that it do not break the tests.
     !
     call exception_setstoponerror ( .false. )
+    !
+    ! Simplest use-case
+    !
+    root = compute_sqrt ( -1. )
+    call exception_getcounter ( counter )
+    call assert ( counter ( EXCEPTION_ERROR ) == 1 , "Wrong error counter" )
+    ! Clean-up
+    call exception_initcounter ()
     !
     ! Generate all levels of exceptions
     !
@@ -220,4 +236,15 @@ subroutine callback2 ()
   call exception_raiseFatalError ( "Wrong blabla !" )
 end subroutine callback2
 
+function compute_sqrt ( value ) result ( root )
+  use m_exception
+  implicit none
+  real, intent(in) :: value
+  real :: root
+  if ( value < 0. ) then
+     call exception_raiseError ( "Value is negative in compute_sqrt" )
+  else
+     root = sqrt ( value )
+  endif
+end function compute_sqrt
 
