@@ -22,7 +22,7 @@
 ! TODO: delimiters!
 !
 !
-! $Id: tokenize.f90,v 1.3 2008-04-02 08:30:55 arjenmarkus Exp $
+! $Id: tokenize.f90,v 1.4 2008-09-03 04:38:15 arjenmarkus Exp $
 !
 
 ! TOKENIZE --
@@ -190,6 +190,11 @@ starttoken: &
        endif
     enddo starttoken
 
+    if ( pos1 .gt. lenstr ) then
+        next_token_gaps = ' '
+        length          = -1
+        return
+    endif
     !
     ! Handle the delimiters - no escaping!
     !
@@ -262,6 +267,12 @@ function next_token_separs( token, string, length )
 
     lenstr = len(string)
     pos    = token%position
+
+    if ( pos .gt. lenstr ) then
+        next_token_separs = ' '
+        length            = -1
+        return
+    endif
 
     if ( index(token%separators(1:token%len_separators), &
                string(pos:pos)) .gt. 0 ) then
