@@ -1,7 +1,7 @@
 ! genetic_algorithms.f90 --
 !     Basic framework for genetic algorithms
 !
-!     $Id: genetic_algorithms.f90,v 1.1 2008-09-28 10:57:45 arjenmarkus Exp $
+!     $Id: genetic_algorithms.f90,v 1.2 2008-10-02 09:02:33 arjenmarkus Exp $
 !
 module genetic_algorithms
 
@@ -208,8 +208,8 @@ subroutine create_descendant( params, idx )
 
         call random_number( y )
         if ( y <= params%mutation_chance ) then
-            call random_index( 32, idbit )
-            idbit = idbit - 1
+            call random_number( y )
+            idbit = 31 + log(y)/log(2.0) ! Select the more important bits most of the time
             if ( btest( new_gene, idbit ) ) then
                 new_gene = ibclr( new_gene, idbit )
             else
