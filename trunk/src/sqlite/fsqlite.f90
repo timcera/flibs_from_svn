@@ -29,7 +29,7 @@
 !    With the appropriate compilation options (if needed)
 !    the code should be thread-safe, as no data are shared.
 !
-!    $Id: fsqlite.f90,v 1.3 2007-04-22 09:32:52 arjenmarkus Exp $
+!    $Id: fsqlite.f90,v 1.4 2008-11-20 05:35:11 arjenmarkus Exp $
 !
 module sqlite_types
 
@@ -58,9 +58,9 @@ module sqlite_types
    end type SQLITE_DATABASE
 
    type SQLITE_COLUMN
-      character(len=40)       :: name
-      character(len=40)       :: type
-      character(len=40)       :: function
+      character(len=40)       :: name     = ' '
+      character(len=40)       :: type     = ' '
+      character(len=40)       :: function = ' '
       integer                 :: type_set
       integer                 :: int_value
       real(kind=dp)           :: double_value
