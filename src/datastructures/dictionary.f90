@@ -20,7 +20,7 @@
 !     - Put both in a separate module, that
 !       will be used.
 !
-!     $Id: dictionary.f90,v 1.3 2007-01-26 09:56:43 arjenmarkus Exp $
+!     $Id: dictionary.f90,v 1.4 2009-05-09 14:34:50 arjenmarkus Exp $
 !
 type LIST_DATA
     character(len=DICT_KEY_LENGTH) :: key
@@ -261,7 +261,7 @@ integer function dict_hashkey( key )
     dict_hashkey = 0
 
     do i = 1,len(key)
-        dict_hashkey = multiplier * dict_hashkey + ichar(key(i:i))
+        dict_hashkey = mod( multiplier * dict_hashkey + ichar(key(i:i)), hash_size )
     enddo
 
     dict_hashkey = 1 + mod( dict_hashkey-1, hash_size )
