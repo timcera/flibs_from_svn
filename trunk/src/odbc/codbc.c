@@ -1,7 +1,7 @@
 /* codbc.c --
       C wrappers callable from Fortran for ODBC
 
-      $Id: codbc.c,v 1.5 2010-01-17 09:08:11 arjenmarkus Exp $
+      $Id: codbc.c,v 1.6 2010-01-17 09:38:35 arjenmarkus Exp $
 */
 #include <stdio.h>
 #include <string.h>
@@ -439,8 +439,7 @@ void FTNCALL odbc_column_name_type_c_(
        int       len_type
       )
 {
-    int          rc   ;
-    char        *pstr ;
+    int          rc            ;
     SQLSMALLINT  actual_length ;
     SQLSMALLINT  data_type     ;
     SQLSMALLINT  column_size   ;
