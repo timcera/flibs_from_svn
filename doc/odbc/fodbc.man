@@ -1,6 +1,6 @@
 [comment {-*- flibs -*- doctools manpage}]
 [manpage_begin flibs/odbc n 1.0]
-[copyright {2005 Arjen Markus <arjenmarkus@sourceforge.net>}]
+[copyright {2010 Arjen Markus <arjenmarkus@sourceforge.net>}]
 [moddesc flibs]
 [titledesc {Interface to ODBC}]
 
@@ -699,7 +699,7 @@ directory of the Flibs project):
 !    - All lines after that contain the name of the station
 !      the date and the two values.
 !
-!    $Id: fodbc.man,v 1.1 2010-01-17 10:13:50 arjenmarkus Exp $
+!    $Id: fodbc.man,v 1.2 2010-01-19 04:55:21 arjenmarkus Exp $
 !
 program csvtable
    use odbc
