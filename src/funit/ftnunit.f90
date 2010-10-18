@@ -19,7 +19,7 @@
 !     - Test the various assertion failures
 !     - Split the source code in several files
 !
-!     $Id: ftnunit.f90,v 1.14 2010-10-18 07:09:36 arjenmarkus Exp $
+!     $Id: ftnunit.f90,v 1.15 2010-10-18 08:31:26 arjenmarkus Exp $
 !
 
 ! ftnunit_utilities
@@ -287,10 +287,13 @@ subroutine runtests_final( stop )
         if ( test_mode == mode_all ) then
             write(*,'(a,i5)') 'Number of failed assertions:                ', nofails
             write(*,'(a,i5)') 'Number of runs needed to complete the tests:', noruns
-            call ftnunit_hook_test_completed
         endif
         call ftnunit_remove_file( "ftnunit.lst" )
         call ftnunit_write_html_footer
+
+        if ( test_mode == mode_all ) then
+            call ftnunit_hook_test_completed
+        endif
 
         if ( .not. present(stop) ) then
             stop
