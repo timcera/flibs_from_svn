@@ -25,7 +25,7 @@
 !     To illustrate the way run-time errors are handled via
 !     the framework, some of these tests result in runtime errors
 !
-!     $Id: test_ftnunit.f90,v 1.7 2010-11-15 07:30:53 arjenmarkus Exp $
+!     $Id: test_ftnunit.f90,v 1.8 2012-03-13 13:01:37 arjenmarkus Exp $
 !
 module data_processing
     implicit none
@@ -410,6 +410,10 @@ end subroutine test_ignored_test
 subroutine test_deliberate_failure
 
     call assert_true( .false.,  "Deliberate failure" )
+
+    if ( assertions_failed() ) then
+        call assertion_report( "Deliberate failure occurred" )
+    endif
 
 end subroutine test_deliberate_failure
 
