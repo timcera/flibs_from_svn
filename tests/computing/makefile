@@ -1,6 +1,6 @@
 # Makefile for "computing" tests and examples
 #
-# $Id: makefile,v 1.6 2012-01-22 19:52:34 arjenmarkus Exp $
+# $Id: makefile,v 1.7 2012-12-23 10:18:12 arjenmarkus Exp $
 #
 include ../../config/config.mk
 include ../../config/options.mk
@@ -15,6 +15,7 @@ PROGRAMS	=	test_diff$(EXEEXT) \
 		test_unsigned$(EXEEXT) \
 		test_f0noIEEE$(EXEEXT) \
 		test_f0withIEEE$(EXEEXT) \
+		test_random_permutation$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -125,6 +126,16 @@ test_f0noIEEE$(EXEEXT):	test_f0noIEEE$(OBJEXT) f0noIEEE$(OBJEXT)
 
 test_f0withIEEE$(EXEEXT):	test_f0withIEEE$(OBJEXT) f0withIEEE$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) test_f0withIEEE$(OBJEXT) f0withIEEE$(OBJEXT)
+
+
+random_permutation$(OBJEXT):	../../src/computing/random_permutation.f90
+	$(FC) $(FFLAGS) ../../src/computing/random_permutation.f90
+
+test_random_permutation$(OBJEXT):	test_random_permutation.f90 random_permutation$(OBJEXT)
+	$(FC) $(FFLAGS) test_random_permutation.f90
+
+test_random_permutation$(EXEEXT):	test_random_permutation$(OBJEXT) random_permutation$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_random_permutation$(OBJEXT) random_permutation$(OBJEXT)
 
 
 clean:	
