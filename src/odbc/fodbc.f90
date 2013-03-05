@@ -1,7 +1,7 @@
 ! fodbc.90 --
 !     Fortran interface to ODBC
 !
-!     $Id: fodbc.f90,v 1.10 2012-11-04 15:12:08 arjenmarkus Exp $
+!     $Id: fodbc.f90,v 1.11 2013-03-05 12:05:13 arjenmarkus Exp $
 !
 !     TODO:
 !     - odbc_prepare_select: more robust method to compute the string length needed
@@ -1081,6 +1081,8 @@ subroutine odbc_insert( db, tablename, columns )
     integer                                   :: rc
     integer, save                             :: indicator
 
+    character (len=10+40*size(columns))       :: string
+
     interface
         subroutine odbc_errmsg_c( handle, errmsg )
             integer, dimension(*) :: handle
@@ -1137,7 +1139,14 @@ subroutine odbc_insert( db, tablename, columns )
     !
     ! Prepare the insert statement for this table
     !
-    write( command, '(100a)' ) 'insert into ', trim(tablename), ' values(', &
+    i = 0
+    string = '('//trim(columns(1)%name)
+    do i = 2,size(columns)
+       string = trim(string)//','//trim(columns(i)%name)
+    end do
+    string = trim(string) //') '
+
+    write( command, '(100a)' ) 'insert into ', trim(tablename),trim(string), ' values(', &
        ('?,', i = 1,size(columns)-1), '?);'
 
     call stringtoc( command )
