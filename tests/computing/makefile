@@ -1,6 +1,6 @@
 # Makefile for "computing" tests and examples
 #
-# $Id: makefile,v 1.7 2012-12-23 10:18:12 arjenmarkus Exp $
+# $Id: makefile,v 1.8 2013-04-26 10:33:50 arjenmarkus Exp $
 #
 include ../../config/config.mk
 include ../../config/options.mk
@@ -16,6 +16,7 @@ PROGRAMS	=	test_diff$(EXEEXT) \
 		test_f0noIEEE$(EXEEXT) \
 		test_f0withIEEE$(EXEEXT) \
 		test_random_permutation$(EXEEXT) \
+		test_enum_space$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -136,6 +137,16 @@ test_random_permutation$(OBJEXT):	test_random_permutation.f90 random_permutation
 
 test_random_permutation$(EXEEXT):	test_random_permutation$(OBJEXT) random_permutation$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) test_random_permutation$(OBJEXT) random_permutation$(OBJEXT)
+
+
+enum_space$(OBJEXT):	../../src/computing/enum_space.f90
+	$(FC) $(FFLAGS) ../../src/computing/enum_space.f90
+
+test_enum_space$(OBJEXT):	test_enum_space.f90 enum_space$(OBJEXT)
+	$(FC) $(FFLAGS) test_enum_space.f90
+
+test_enum_space$(EXEEXT):	test_enum_space$(OBJEXT) enum_space$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_enum_space$(OBJEXT) enum_space$(OBJEXT)
 
 
 clean:	
