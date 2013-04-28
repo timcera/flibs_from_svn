@@ -15,7 +15,7 @@
 !  A replace-string routine does not seem very useful, one
 !  can create it by combining the delete and insert functions
 !
-!  $Id: textstr.f90,v 1.3 2006-03-26 19:03:53 arjenmarkus Exp $
+!  $Id: textstr.f90,v 1.4 2013-04-28 09:55:44 arjenmarkus Exp $
 !
 module edit_text
    implicit none
@@ -157,9 +157,10 @@ subroutine txt_from_string( text, string )
     do i = 1,nosegm-1
         text%text(i) = string(1+(i-1)*segment_length:i*segment_length)
     enddo
-    text%text(nosegm) = string(1+(nosegm-1)*segment_length:)
+    if ( nosegm > 0 ) then
+        text%text(nosegm) = string(1+(nosegm-1)*segment_length:)
+    endif
     text%length       = len(string)
-
 end subroutine txt_from_string
 
 ! txt_to_string --
@@ -183,8 +184,11 @@ subroutine txt_to_string( text, string )
     do i = 1,nosegm-1
         string(1+(i-1)*segment_length:i*segment_length) = text%text(i)
     enddo
-    string(1+(nosegm-1)*segment_length:) = text%text(nosegm)
-
+    if ( nosegm > 0 ) then
+        string(1+(nosegm-1)*segment_length:) = text%text(nosegm)
+    else
+        string = ' '
+    endif
 end subroutine txt_to_string
 
 ! txt_read_from_file --
