@@ -1,6 +1,6 @@
 # Makefile for "computing" tests and examples
 #
-# $Id: makefile,v 1.8 2013-04-26 10:33:50 arjenmarkus Exp $
+# $Id: makefile,v 1.9 2013-06-30 09:44:18 arjenmarkus Exp $
 #
 include ../../config/config.mk
 include ../../config/options.mk
@@ -17,6 +17,7 @@ PROGRAMS	=	test_diff$(EXEEXT) \
 		test_f0withIEEE$(EXEEXT) \
 		test_random_permutation$(EXEEXT) \
 		test_enum_space$(EXEEXT) \
+		test_grid_traverse$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -147,6 +148,16 @@ test_enum_space$(OBJEXT):	test_enum_space.f90 enum_space$(OBJEXT)
 
 test_enum_space$(EXEEXT):	test_enum_space$(OBJEXT) enum_space$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) test_enum_space$(OBJEXT) enum_space$(OBJEXT)
+
+
+traverse_grid$(OBJEXT):	../../src/computing/traverse_grid.f90 select_precision$(OBJEXT)
+	$(FC) $(FFLAGS) ../../src/computing/traverse_grid.f90
+
+test_traverse_grid$(OBJEXT):	test_traverse_grid.f90 traverse_grid$(OBJEXT) select_precision$(OBJEXT)
+	$(FC) $(FFLAGS) test_traverse_grid.f90
+
+test_traverse_grid$(EXEEXT):	test_traverse_grid$(OBJEXT) traverse_grid$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_traverse_grid$(OBJEXT) traverse_grid$(OBJEXT)
 
 
 clean:	
