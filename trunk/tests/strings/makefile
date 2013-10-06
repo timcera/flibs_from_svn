@@ -1,12 +1,14 @@
-# Makefile for "computing" tests and examples
+# Makefile for "string manipulation" tests and examples
 #
-# $Id: makefile,v 1.1 2012-11-04 12:57:07 arjenmarkus Exp $
+# $Id: makefile,v 1.2 2013-10-06 11:37:57 arjenmarkus Exp $
 #
 include ../../config/config.mk
 include ../../config/options.mk
 
 PROGRAMS	=	test_token$(EXEEXT) \
 		test_tokenlist$(EXEEXT) \
+		text_tst$(EXEEXT) \
+		test_textstr_func$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -28,6 +30,26 @@ tokenlist$(OBJEXT):	../../src/strings/tokenlist.f90
 
 test_tokenlist$(EXEEXT):	test_tokenlist$(OBJEXT) tokenlist$(OBJEXT) tokenize$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) test_tokenlist$(OBJEXT) tokenlist$(OBJEXT) tokenize$(OBJEXT)
+
+
+textstr$(OBJEXT):	../../src/strings/textstr.f90
+	$(FC) $(FFLAGS) ../../src/strings/textstr.f90
+
+text_tst$(OBJEXT):	text_tst.f90 textstr$(OBJEXT)
+	$(FC) $(FFLAGS) text_tst.f90
+
+text_tst$(EXEEXT):	text_tst$(OBJEXT) textstr$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) text_tst$(OBJEXT) textstr$(OBJEXT)
+
+
+textstr_func$(OBJEXT):	../../src/strings/textstr_func.f90
+	$(FC) $(FFLAGS) ../../src/strings/textstr_func.f90
+
+test_textstr_func$(OBJEXT):	test_textstr_func.f90 textstr_func$(OBJEXT)
+	$(FC) $(FFLAGS) test_textstr_func.f90
+
+test_textstr_func$(EXEEXT):	test_textstr_func$(OBJEXT) textstr_func$(OBJEXT) textstr_func$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_textstr_func$(OBJEXT) textstr_func$(OBJEXT) textstr$(OBJEXT)
 
 
 clean:	
