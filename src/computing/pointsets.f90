@@ -4,7 +4,7 @@
 !
 !     TODO: 3D, circles, spheres, on spherical surface
 !
-!     $Id: pointsets.f90,v 1.2 2006-06-25 07:24:31 arjenmarkus Exp $
+!     $Id: pointsets.f90,v 1.3 2013-12-27 11:36:01 arjenmarkus Exp $
 !
 module pointsets
     use select_precision
@@ -275,8 +275,8 @@ logical function filter_triangle( xp, yp, x, y, params )
     use select_precision
     real(kind=wp), intent(inout)            :: xp
     real(kind=wp), intent(inout)            :: yp
-    real(kind=wp), dimension(:), intent(in) :: x
-    real(kind=wp), dimension(:), intent(in) :: y
+    real(kind=wp), dimension(:), intent(in) :: x     ! Dummy in this case
+    real(kind=wp), dimension(:), intent(in) :: y     ! Ditto
     real(kind=wp), dimension(:), intent(in) :: params
 
     if ( xp/params(1)+yp/params(2) < 1.0 ) then
@@ -338,10 +338,10 @@ subroutine random_disk( x, y, radius )
     y = 2.0_wp * pi * y
 
     do i = 1,size(x)
-        xp = x(i)
+        xp = x(i) * radius
         yp = y(i)
         x(i) = xp * cos(yp)
-        y(i) = yp * sin(yp)
+        y(i) = xp * sin(yp)
     enddo
 
 end subroutine random_disk
@@ -377,7 +377,7 @@ subroutine random_ball( x, y, z, radius )
     z = acos( 2.0_wp*z-1.0_wp )
 
     do i = 1,size(x)
-        xp = x(i)
+        xp = x(i) * radius
         yp = y(i)
         zp = z(i)
         x(i) = xp * cos(yp) * cos(zp)
