@@ -1,12 +1,15 @@
 /* csqlite.c --
       C wrappers callable from Fortran for the SQLite library
 
-      $Id: csqlite.c,v 1.4 2008-05-04 13:23:56 arjenmarkus Exp $
+      $Id: csqlite.c,v 1.4 2008/05/04 13:23:56 arjenmarkus Exp $
 */
 #if !defined(LOWERCASE) && !defined(DBL_UNDERSCORE)
-#ifdef WIN32
-#define FTNCALL __stdcall
-#define INBETWEEN
+#define UPPERCASE
+#endif
+
+#if defined(UPPERCASE)
+#define FTNCALL
+#undef  INBETWEEN
 #define sqlite3_open_c_                SQLITE3_OPEN_C
 #define sqlite3_close_c_               SQLITE3_CLOSE_C
 #define sqlite3_do_c_                  SQLITE3_DO_C
@@ -27,11 +30,11 @@
 #define sqlite3_column_text_c_         SQLITE3_COLUMN_TEXT_C
 #define sqlite3_get_table_1_c_         SQLITE3_GET_TABLE_1_C
 #define sqlite3_get_table_2_c_         SQLITE3_GET_TABLE_2_C
-#endif /* WIN32 */
-#endif /* !defined(LOWERCASE) && !defined(DBL_UNDERSCORE) */
+#endif /* UPPERCASE */
 
 #if defined(LOWERCASE) || defined(DBL_UNDERSCORE)
 #define FTNCALL
+#undef INBETWEEN
 #if defined(DBL_UNDERSCORE)
 #define sqlite3_open_c_                sqlite3_open_c__
 #define sqlite3_close_c_               sqlite3_close_c__
