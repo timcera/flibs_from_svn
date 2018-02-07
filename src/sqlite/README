@@ -2,12 +2,34 @@ Compiling the Fortran interface to the Sqlite3 library
 ------------------------------------------------------
 
 The makefile in this directory contains an explanation
-of how to build a library from the sources. This 
+of how to build a library from the sources. This
 explanation is geared to:
 - UNIX/Linux type platforms (includes Cygwin and MingW
   under Windows and OSX)
 - It explains the creation of a static library only
 
-Some of this information is useful for compiling under 
+Some of this information is useful for compiling under
 MS Windows as well, but the file names are typical for
 the UNIX-type platform.
+
+
+dd. 7 february 2018
+
+***Update***
+
+As compilers and OSes develop, most notably the move from
+32 bits to 64 bits, things can change a lot. The information
+in the makefile is partly deprecated. To accommodate for the
+Intel Fortran compiler on Windows and the above mentioned
+changes, I made some adjustments to the interfacing code.
+
+The practical consequences:
+- Define the macro LOWERCASE for compiling csqlite.c for
+  the gcc C compiler (Linux, Cygwin and MinGW) in combination
+  with the gfortran and Intel Fortran compilers.
+- Define the macro UPPERCASE (actually the default) for the
+  combination MSVC C/C++ and Intel Fortran compiler on Windows.
+
+(I have not encountered the double underscore convention in
+a long time and other variants that were catered for via
+the INBETWEEN and FTNCALL macros are no longer abundant either.)
