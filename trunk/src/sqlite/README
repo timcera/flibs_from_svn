@@ -13,6 +13,31 @@ MS Windows as well, but the file names are typical for
 the UNIX-type platform.
 
 
+dd. 6 march 2018
+
+***Update***
+
+I have adjusted the interfaces from Fortran to C so that
+the calling convention/name mangling is no longer of
+importance, thanks to the C/Fortran interface features
+that were introduced in Fortran 2003.
+
+This makes the building of the library quite a bit simpler.
+
+Furthermore the source for SQLite is now included in the
+distribution - version 3.22.0. The most recent version may
+of course be found on http://www.sqlite.org
+
+***Caveat***
+
+For some reason building the sample programs on Windows
+using nmake, Intel Fortran and MS Visual C++, does not
+work quite as smoothly as intended. The link step fails:
+ifconsol.lib not found, but if you type in the exact same
+command, it succeeds. No idea what is going wrong.
+
+
+
 dd. 7 february 2018
 
 ***Update***
