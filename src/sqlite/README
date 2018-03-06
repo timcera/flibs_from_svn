@@ -28,13 +28,20 @@ Furthermore the source for SQLite is now included in the
 distribution - version 3.22.0. The most recent version may
 of course be found on http://www.sqlite.org
 
-***Caveat***
+***Caveat: Windows***
 
 For some reason building the sample programs on Windows
 using nmake, Intel Fortran and MS Visual C++, does not
 work quite as smoothly as intended. The link step fails:
 ifconsol.lib not found, but if you type in the exact same
 command, it succeeds. No idea what is going wrong.
+
+***Caveat: Linux***
+
+It turns out that on Linux you need to add "-lpthread -ldl"
+to the link step. That needs to be added to the configuration.
+(And makes the gfortran configuration diverge between Linux
+and Windows - Cygwin, MinGW)
 
 
 
