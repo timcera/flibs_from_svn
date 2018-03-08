@@ -29,13 +29,13 @@ csvdata$(EXEEXT):	csvdata.f90
 	$(FC) $(LDOUTPUT) csvdata.f90
 
 test_sqlite$(EXEEXT):	csvtable$(OBJEXT) libfsqlite$(LIBEXT)
-	$(LD) $(LDFLAGS) $(LDOUTPUT) csvtable$(OBJEXT) libfsqlite$(LIBEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) csvtable$(OBJEXT) libfsqlite$(LIBEXT) $(EXTRALIBS)
 
 csvtable$(OBJEXT):	csvtable.f90 fsqlite$(OBJEXT)
 	$(FC) $(FFLAGS) csvtable.f90
 
 libfsqlite$(LIBEXT):	fsqlite$(OBJEXT) csqlite$(OBJEXT) sqlite3$(OBJEXT)
-	$(LIB) $(LIBOUT)libfsqlite$(LIBEXT) fsqlite$(OBJEXT) csqlite$(OBJEXT) sqlite3$(OBJEXT)
+	$(MKLIB) $(LIBOUT)libfsqlite$(LIBEXT) fsqlite$(OBJEXT) csqlite$(OBJEXT) sqlite3$(OBJEXT)
 
 fsqlite$(OBJEXT):	../../src/sqlite/fsqlite.f90
 	$(FC) $(FFLAGS) ../../src/sqlite/fsqlite.f90
