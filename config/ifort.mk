@@ -18,7 +18,7 @@ LDFLAGS_DEBUG	=	-g
 LDFLAGS_OPTIMISE	=	
 LDOUTPUT	=	-o $@
 
-LIB	=	ar r
+MKLIB	=	ar r
 LIBOUT	=
 
 OBJEXT	=	.o

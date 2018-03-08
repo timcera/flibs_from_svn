@@ -1,4 +1,4 @@
-# Options for gfortran - Linux version
+# Options for gfortran - Windows (Cygwin MinGW) version
 #
 # Maybe define LDOUTPUT as LDOUTPUT=-o $@
 #
@@ -23,11 +23,12 @@ LDOUTPUT	=	-o $@
 
 MKLIB	=	ar r
 LIBOUT	=
-EXTRALIBS	=	-lpthread -ldl
+EXTRALIBS	=
 
 OBJEXT	=	.o
 EXEEXT	=	
 MODEXT	=	.mod
 LIBEXT	=	.a
+
 
 DELETE	=	rm -f

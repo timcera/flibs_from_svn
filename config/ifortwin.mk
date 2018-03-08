@@ -18,8 +18,9 @@ LDFLAGS_DEBUG	=	/debug
 LDFLAGS_OPTIMISE	=	/fast
 LDOUTPUT	=	/exe:$@
 
-LIB	=	lib
+MKLIB	=	lib
 LIBOUT	=	/out:
+EXTRALIBS	=
 
 OBJEXT	=	.obj
 EXEEXT	=	.exe
