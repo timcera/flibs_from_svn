@@ -544,6 +544,7 @@ subroutine sqlite3_create_table( db, tablename, columns, primary )
 
    character(len=20+80*size(columns)) :: command
    character(len=40)                  :: primary_
+   character(len=40)                  :: format
    integer                            :: i
    integer                            :: ncols
 
@@ -553,7 +554,8 @@ subroutine sqlite3_create_table( db, tablename, columns, primary )
    endif
 
    ncols = size(columns)
-   write( command, '(100a)' ) 'create table ', tablename, ' (', &
+   write( format, '(a,i0,a)' ) '(', 4 + 4 * ncols, 'a)'
+   write( command, format ) 'create table ', tablename, ' (', &
       ( trim(columns(i)%name), ' ', trim(typename(columns(i), primary_)), ', ', &
            i = 1,ncols-1 ), &
       trim(columns(ncols)%name), ' ', trim(typename(columns(ncols),primary_)), ')'
@@ -581,6 +583,7 @@ subroutine sqlite3_prepare_select( db, tablename, columns, stmt, extra_clause )
    type(SQLITE_STATEMENT), intent(out)         :: stmt
 
    character(len=20+80*size(columns))          :: command
+   character(len=40)                           :: format
    integer                                     :: nocols
    integer                                     :: i
 
@@ -590,7 +593,8 @@ subroutine sqlite3_prepare_select( db, tablename, columns, stmt, extra_clause )
    ! TODO: expand the syntax!!
    !
    nocols = size(columns)
-   write( command, '(100a)' ) 'select ', &
+   write( format, '(a,i0,a)' ) '(', 4 + 2 * nocols, 'a)'
+   write( command, format ) 'select ', &
       (trim(column_func(columns(i))), ',', i = 1,nocols-1), &
        trim(column_func(columns(nocols))), &
       ' from ', trim(tablename)
@@ -621,6 +625,7 @@ subroutine sqlite3_insert( db, tablename, columns )
    character(len=*)                            :: tablename
    type(SQLITE_COLUMN), dimension(:), target   :: columns
    character(len=20+80*size(columns))          :: command
+   character(len=40)                           :: format
 
    type(SQLITE_COLUMN), dimension(:), pointer  :: prepared_columns
    type(SQLITE_STATEMENT)                      :: stmt
@@ -664,7 +669,8 @@ subroutine sqlite3_insert( db, tablename, columns )
    !
    ! Prepare the insert statement for this table
    !
-   write( command, '(100a)' ) 'insert into ', trim(tablename), ' values(', &
+   write( format, '(a,i0,a)' ) '(', 4 + 2 * size(columns), 'a)'
+   write( command, format ) 'insert into ', trim(tablename), ' values(', &
       ('?,', i = 1,size(columns)-1), '?)'
 
    call stringtoc( command )
