@@ -11,6 +11,8 @@ FFLAGS_NORMAL	=	-c
 FFLAGS_DEBUG	=	-c -g
 FFLAGS_OPTIMISE	=	-c -O
 
+PREPROCESS	=	-cpp
+
 CC	=	gcc
 CFLAGS	=	-c
 
