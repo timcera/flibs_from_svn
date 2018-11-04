@@ -7,7 +7,7 @@ include ../../config/options.mk
 
 FFLAGS +=-I../../src/datastructures
 FFLAGS +=-I../../tests/support
-FFLAGS +=-cpp
+FFLAGS +=$(PREPROCESS)
 
 PROGRAMS	=	test_vectors$(EXEEXT) \
 	test_btree$(EXEEXT) \
