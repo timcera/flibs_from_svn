@@ -88,6 +88,8 @@
 #     - unattractive extension: a*-1.0
 #     - unattractive extension: a(1.1) = ...
 #
+#     - check definition of C_PRTDIFF_T in ISO_C_BINDING
+#
 @chk_newunit
 FEATURE
 The compiler does not support OPEN( NEWUNIT = ... )
@@ -508,6 +510,10 @@ The compiler does not allow a 2D pointer to be associated with a 1D array
 FEATURE
 The compiler does not support implied shape arrays (parameter arrays with automatic size)
 
+@chk_implied_char_length
+FEATURE
+The compiler does not support implied lengths for character string parameters
+
 @chk_pointer_function
 FEATURE
 The compiler does not support pointer functions
@@ -641,3 +647,7 @@ The compiler should have accepted the program - please check
 @chk_coarrays_image
 FEATURE
 The compiler does not seem to support coarrays or requires a specific option
+
+@chk_c_ptrdiff_t
+FEATURE
+The compiler does not support the kind C_PTRDIFF_T for the difference between memory addresses
