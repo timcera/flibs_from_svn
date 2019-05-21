@@ -652,6 +652,10 @@ The compiler does not seem to support coarrays or requires a specific option
 FEATURE
 The compiler does not seem to support coarrays or requires a specific option
 
+@chk_coarrays_reduction
+FEATURE
+The compiler does not seem to support coarrays or requires a specific option
+
 @chk_c_ptrdiff_t
 FEATURE
 The compiler does not support the kind C_PTRDIFF_T for the difference between memory addresses
