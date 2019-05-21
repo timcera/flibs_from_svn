@@ -648,6 +648,10 @@ The compiler should have accepted the program - please check
 FEATURE
 The compiler does not seem to support coarrays or requires a specific option
 
+@chk_open_coarrays
+FEATURE
+The compiler does not seem to support coarrays or requires a specific option
+
 @chk_c_ptrdiff_t
 FEATURE
 The compiler does not support the kind C_PTRDIFF_T for the difference between memory addresses
