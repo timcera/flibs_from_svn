@@ -654,8 +654,13 @@ The compiler does not seem to support coarrays or requires a specific option
 
 @chk_coarrays_reduction
 FEATURE
-The compiler does not seem to support coarrays or requires a specific option
+The compiler does not seem to support reduction routines (coarrays, Fortran 2018)
+or requires a specific option
 
 @chk_c_ptrdiff_t
 FEATURE
 The compiler does not support the kind C_PTRDIFF_T for the difference between memory addresses
+
+@chk_recursive_elemental
+FEATURE
+The compiler does not support recursive elemental routines (Fortran 2018)
