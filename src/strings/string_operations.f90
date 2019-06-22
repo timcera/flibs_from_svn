@@ -16,7 +16,6 @@
 !     newstring = replace( string, [pair('A', 'a'), pair('B', 'b'), ...])
 !
 !     TODO:
-!     - tolower/toupper
 !     - read a complete line from a file
 !
 !     delete: string, first, length
@@ -229,53 +228,121 @@ function delete( input, pos, length )
 
 end function delete
 
-end module string_operations
-
-! test --
+! tolower --
+!     Convert a string to lower case - assuming ASCII characters only!
 !
-program test_replace_strings
-    use string_operations
+! Arguments:
+!     input          The input string
+!
+function tolower( input )
+    character(len=*), intent(in)         :: input
+    character(len=len(input))            :: tolower
 
-    character(len=:), allocatable :: result
+    integer                              :: i
+    integer                              :: ach
+    integer, parameter                   :: ascii_a         = iachar('a')
+    integer, parameter                   :: ascii_capital_z = iachar('Z')
+    integer, parameter                   :: ascii_capital_a = iachar('A')
+    integer, parameter                   :: offset          = ascii_a - ascii_capital_a
 
-    result = replace( 'Replace StRings', 'R', 'XXXX' )
-    write(*,*) result
-    result = replace( 'Replace StRings', 'R', 'XXXX', first_only )
-    write(*,*) result
-    result = replace( 'Replace StRings', 'R', 'XXXX', last_only )
-    write(*,*) result
-    result = replace( 'RYeplace StRings', 'RY', 'XXXX', last_only )
-    write(*,*) result
+    tolower = input
 
-    ! Check that replacement occurs with the right priority - RY occurs first, so it
-    ! should be replaced by 'XXXX', not by 'YY'
-    result = replace( 'RYeplace StRings', [pair('RY', 'XXXX'), pair('R', 'YY')] )
-    write(*,*) result
+    do i = 1,len(input)
+        ach = iachar(tolower(i:i))
+        if ( ach >= ascii_capital_a .and. ach <= ascii_capital_z ) then
+            tolower(i:i) = achar(ach + offset)
+        endif
+    enddo
 
-    result = insert( 'Insert string', prepend, 'X' )
-    write(*,*) result
-    result = insert( 'Insert string', append, 'X' )
-    write(*,*) result
-    result = insert( 'Insert string', 3, 'X' ) ! After "s"
-    write(*,*) result
+end function tolower
 
-    result = delete( 'Delete string', 1, 4 )
-    write(*,*) result
+! toupper --
+!     Convert a string to upper case - assuming ASCII characters only!
+!
+! Arguments:
+!     input          The input string
+!
+function toupper( input )
+    character(len=*), intent(in)         :: input
+    character(len=len(input))            :: toupper
 
-    result = delete( 'Delete string', 4, 4 )
-    write(*,*) result
+    integer                              :: i
+    integer                              :: ach
+    integer, parameter                   :: ascii_a         = iachar('a')
+    integer, parameter                   :: ascii_z         = iachar('z')
+    integer, parameter                   :: ascii_capital_a = iachar('A')
+    integer, parameter                   :: offset          = ascii_a - ascii_capital_a
 
-    result = delete( 'Delete string', 20, 4 )
-    write(*,*) result
+    toupper = input
 
-    ! Careful here: empty substring!
-    result = replace( 'RYeplace StRings', [pair('', 'XXXX'), pair('R', 'YY')] )
-    write(*,*) result
+    do i = 1,len(input)
+        ach = iachar(toupper(i:i))
+        if ( ach >= ascii_a .and. ach <= ascii_z ) then
+            toupper(i:i) = achar(ach - offset)
+        endif
+    enddo
 
-    ! Nothing to replace
-    result = replace( 'RYeplace StRings', [pair('X', 'XXXX'), pair('Z', 'YY')] )
-    write(*,*) result
+end function toupper
 
+! trimx --
+!     Remove leading and trailing characters from a string
+!
+! Arguments:
+!     input          The input string
+!     set            The set of characters that should be removed
+!
+function trimx( input, set )
+    character(len=*), intent(in)         :: input
+    character(len=*), intent(in)         :: set
+    character(len=:), allocatable        :: trimx
 
-end program test_replace_strings
+    integer                              :: start, stop
 
+    start = verify( input, set )
+    stop  = verify( input, set, .true. )
+
+    trimx = input(start:stop)
+
+end function trimx
+
+! trimxleft --
+!     Remove leading characters from a string
+!
+! Arguments:
+!     input          The input string
+!     set            The set of characters that should be removed
+!
+function trimxleft( input, set )
+    character(len=*), intent(in)         :: input
+    character(len=*), intent(in)         :: set
+    character(len=:), allocatable        :: trimxleft
+
+    integer                              :: start
+
+    start = verify( input, set )
+
+    trimxleft = input(start:)
+
+end function trimxleft
+
+! trimxright --
+!     Remove leading characters from a string
+!
+! Arguments:
+!     input          The input string
+!     set            The set of characters that should be removed
+!
+function trimxright( input, set )
+    character(len=*), intent(in)         :: input
+    character(len=*), intent(in)         :: set
+    character(len=:), allocatable        :: trimxright
+
+    integer                              :: stop
+
+    stop  = verify( input, set, .true. )
+
+    trimxright = input(:stop)
+
+end function trimxright
+
+end module string_operations
