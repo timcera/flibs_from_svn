@@ -15,12 +15,6 @@
 !
 !     newstring = replace( string, [pair('A', 'a'), pair('B', 'b'), ...])
 !
-!     TODO:
-!     - read a complete line from a file
-!
-!     delete: string, first, length
-!     insert: string, position (insert after, special values: prepend, append)
-!
 module string_operations
     implicit none
 
@@ -344,5 +338,61 @@ function trimxright( input, set )
     trimxright = input(:stop)
 
 end function trimxright
+
+! read_line_from_file --
+!    Read one complete line as a string from a file
+! Arguments:
+!    lun         LU-number of the file to be read
+!    text        Text string to be created/filled
+!    eof         Whether end-of-file was reached or not
+! Side effects:
+!    Text string is properly initialised
+!
+subroutine read_line_from_file( lun, text, eof )
+    integer, intent(in)              :: lun
+    character(len=:), allocatable    :: text
+    logical, intent(out)             :: eof
+
+    integer, parameter               :: SEGMENT_LENGTH = 40
+
+    character(len=SEGMENT_LENGTH)    :: segment
+    integer                          :: reclen
+    logical                          :: eor
+
+    eof  = .false.
+
+    text = ''
+
+    !
+    ! Read the record in segments
+    !
+    do
+        read( lun, end = 180, eor = 170, fmt = '(a)', &
+              size = reclen, advance='no') segment
+        !
+        ! Not at the end yet, add to the string
+        !
+        text = text // segment
+    enddo
+
+    !
+    ! End of record (end of file will give an empty text string)
+    !
+170 continue
+    text = text // segment(1:reclen)
+    return
+
+    !
+    ! End of file
+    !
+180 continue
+    text = ''
+    eof = .true.
+    return
+
+    !
+    ! Errors are not handled explicitly ...
+    !
+end subroutine read_line_from_file
 
 end module string_operations
