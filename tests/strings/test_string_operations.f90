@@ -5,6 +5,7 @@ program test_string_operations
     use string_operations
 
     character(len=:), allocatable :: result
+    logical                       :: eof
 
     write(*,*) 'Replace a substring:'
     result = replace( 'Replace StRings', 'R', 'XXXX' )
@@ -64,5 +65,19 @@ program test_string_operations
     write(*,*) '   >', result, '<'
     result = trimxright( 'A SIMPLE SENTENCE AAA AAA ', ' A' )
     write(*,*) '   >', result, '<'
+
+    !
+    ! Read a file line by line
+    !
+    open( 10, file = 'test_string_operations.inp' )
+
+    do
+        call read_line_from_file( 10, result, eof )
+        if ( eof ) then
+            exit
+        endif
+
+        write( *, '(3a)' ) '>', result, '<'
+    enddo
 
 end program test_string_operations
