@@ -664,3 +664,7 @@ The compiler does not support the kind C_PTRDIFF_T for the difference between me
 @chk_recursive_elemental
 FEATURE
 The compiler does not support recursive elemental routines (Fortran 2018)
+
+@chk_writealloc
+EXTENSION
+The compiler adheres to the restriction about allocatable and pointer components
