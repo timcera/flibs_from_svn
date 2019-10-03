@@ -8,6 +8,8 @@
 !     Hm, a module within a template?
 !     What about a template for a single routine/function?
 !
+!     TODO: starts_with() -> first_word()
+!
 program template_preproc
     implicit none
 
@@ -15,7 +17,7 @@ program template_preproc
     character(len=100) :: filename, include_file
     integer            :: ierr, lun, lunout, lunincl, luntemp
     integer            :: includeno
-    logical            :: In_definition, in_module
+    logical            :: in_definition, in_module, has_contains
 
 
     !
@@ -35,8 +37,9 @@ program template_preproc
     open( newunit = lunout, file = "_" // filename )
 
 
-    in_module = .false.
-    includeno = 0
+    in_module    = .false.
+    includeno    = 0
+    has_contains = .false.
 
     do
         read( lun, '(a)', iostat = ierr ) srcline
@@ -48,43 +51,48 @@ program template_preproc
         ! Handle the start of a module, subroutine, function of submodule
         ! (for now, only "module")
         !
-        if ( starts_with( srcline, 'module' ) ) then
-            in_module = .true.
-            includeno = includeno +1
-            write( include_file, '(a,i0,2a)' ) '_' , includeno, '_', trim(filename)
-            open( newunit = lunincl, file = include_file )
-            write( lunout, '(a)' ) trim(srcline)
-            write( lunout, '(a,a)' ) 'include ', trim(include_file)
+        select case( first_word(srcline) )
+            case( 'module' )
+                in_module = .true.
+                includeno = includeno +1
+                write( include_file, '(a,i0,2a)' ) '_' , includeno, '_', trim(filename)
+                open( newunit = lunincl, file = include_file )
+                write( lunout, '(a)' ) trim(srcline)
+                write( lunout, '(a,a)' ) 'include ', trim(include_file)
 
-        elseif ( starts_with( srcline, 'end module' ) ) then
-            in_module = .false.
-            close( lunincl )
-            write( lunout, '(a)' ) 'END MODULE:'
-            call copy_temp_file( luntemp, lunout )
-            write( lunout, '(a)' ) trim(srcline)
+            case( 'endmodule' )
+                in_module = .false.
+                close( lunincl )
+                if ( .not. has_contains ) then
+                    write( lunout, '(a)' ) 'contains ! added'
+                endif
+                call copy_temp_file( luntemp, lunout )
+                write( lunout, '(a)' ) trim(srcline)
 
-        elseif ( starts_with( srcline, 'use_template' ) ) then
-            !
-            ! Do we have a use_template statement? If so, handle it separately
-            !
-            write( lunout, '(a)' ) 'USE_TEMPLATE'
-            write( *, '(a)' ) 'USE_TEMPLATE -- main'
-            call handle_template_usage( lunout, srcline, .false. )
+            case( 'contains' )
+                has_contains = .true.
+                write( lunout, '(a)' ) trim(srcline)
 
-        elseif ( starts_with( srcline, 'template' ) ) then
-            !
-            ! Do we have a template definition? If so, handle it separately
-            !
-            write( lunout, '(a)' ) 'TEMPLATE'
-            call handle_template( lun, srcline )
-        else
-            !
-            ! Any other line
-            !
-            write( lunout, '(a)' ) trim(srcline)
-        endif
+            case( 'use_template' )
+                !
+                ! Do we have a use_template statement? If so, handle it separately
+                !
+                call handle_template_usage( lunout, lunincl, srcline )
+
+            case( 'template' )
+                !
+                ! Do we have a template definition? If so, handle it separately
+                !
+                call handle_template( lun, srcline )
+            case default
+                !
+                ! Any other line
+                !
+                write( lunout, '(a)' ) trim(srcline)
+        endselect
     enddo
 contains
+
 ! starts_width --
 !     Determine if a line starts with a certain word
 !
@@ -117,6 +125,40 @@ logical function starts_with( line, word )
      endif
 end function starts_with
 
+! first_word --
+!     Read the first word from a line
+!
+! Arguments:
+!     line              Line to be examined
+!
+! Note:
+!     Slightly naïve, as it does not take care of variables and the like called "end"
+!
+function first_word( line )
+    character(len=*), intent(in) :: line
+
+    character(len=40)            :: first_word
+    character(len=40)            :: first
+    character(len=40)            :: second
+    integer                      :: ierr
+
+    read( line, *, iostat = ierr ) first
+
+    if ( ierr /= 0 ) then
+        first_word = ''
+    elseif ( first == 'end' ) then
+        read( line, *, iostat = ierr ) first, second
+
+        if ( ierr /= 0 ) then
+            first_word = first
+        else
+            first_word = trim(first) // trim(second)
+        endif
+    else
+        first_word = first
+    endif
+end function first_word
+
 ! handle_template --
 !     Handle the complete definition of the template:
 !     - Copy the various parts to separate intermediate fles
@@ -133,7 +175,7 @@ subroutine handle_template( lun, tmpl_start )
     character(len=1)             :: dummy
     character(len=40)            :: template_name
     integer                      :: ierr, lunuse, luncont, lundef
-    logical                      :: In_definition, in_type
+    logical                      :: in_definition, in_type
 
     write(*,*) trim(tmpl_start)
     read( tmpl_start, * ) dummy, template_name
@@ -155,49 +197,47 @@ subroutine handle_template( lun, tmpl_start )
         endif
 
         if ( in_definition ) then
-            !
-            ! Ignore "implicit" statements
-            !
 
-            if ( starts_with( srcline, "implicit" ) ) then
-                cycle
-            endif
+            select case( first_word(srcline) )
+                !
+                ! Ignore "implicit" statements
+                !
+                case( "implicit" )
+                    cycle
 
-            !
-            ! "use" statements are collected in "lunuse"
-            ! other lines in the definitions section in "lunuse"
-            ! all lines in the contains section in "luncont"
-            !
-            ! Be aware of any "use_template" statements
-            !
-            if ( starts_with( srcline, "use" ) ) then
-                write( lunuse, '(a)' ) trim(srcline)
-                cycle
-            endif
+                !
+                ! "use" statements are collected in "lunuse"
+                ! other lines in the definitions section in "lunuse"
+                ! all lines in the contains section in "luncont"
+                !
+                ! Be aware of any "use_template" statements
+                !
+                case( "use" )
+                    write( lunuse, '(a)' ) trim(srcline)
+                    cycle
 
-            if ( starts_with( srcline, "use_template" ) ) then
-                call handle_template_usage( lundef, srcline, .true. )
-                cycle
-            endif
+                case( "use_template" )
+                    call handle_template_usage( lundef, lunuse, srcline )
+                    cycle
 
-            if ( starts_with( srcline, "type" ) ) then
-                in_type = .true.
-            endif
-            if ( starts_with( srcline, "endtype" ) .or. starts_with( srcline, "end type" ) ) then
-                in_type = .false.
-            endif
+                case( "type" )
+                    in_type = .true.
 
-            if ( starts_with( srcline, "contains" ) .and. .not. in_type ) then
-                in_definition = .false.
-            endif
+                case( "endtype" )
+                    in_type = .false.
 
-            if ( starts_with( srcline, "endtemplate" ) .or. starts_with( srcline, "end template" ) ) then
-                write(*,*) 'Closing intermediate files - ', trim(template_name)
-                close( lunuse  )
-                close( luncont )
-                close( lundef  )
-                exit
-            endif
+                case( "contains" )
+                    if ( .not. in_type ) then
+                        in_definition = .false.
+                    endif
+
+                case( "endtemplate" )
+                    write(*,*) 'Closing intermediate files - ', trim(template_name)
+                    close( lunuse  )
+                    close( luncont )
+                    close( lundef  )
+                    exit
+            endselect
 
             !
             ! Write out the source line
@@ -206,19 +246,18 @@ subroutine handle_template( lun, tmpl_start )
                 write( lundef, '(a)' ) trim(srcline)
             endif
         else
-            if ( starts_with( srcline, "use_template" ) ) then
-                write(*,*) '>>> use 2'
-                call handle_template_usage( lundef, srcline, .true. )
-                cycle
-            endif
+            select case( first_word(srcline) )
+                case( "use_template" )
+                    call handle_template_usage( lundef, lunuse, srcline )
+                    cycle
 
-            if ( starts_with( srcline, "endtemplate" ) .or. starts_with( srcline, "end template" ) ) then
-                write(*,*) 'Closing intermediate files - ', trim(template_name)
-                close( lunuse  )
-                close( luncont )
-                close( lundef  )
-                exit
-            endif
+                case( "endtemplate" )
+                    write(*,*) 'Closing intermediate files - ', trim(template_name)
+                    close( lunuse  )
+                    close( luncont )
+                    close( lundef  )
+                    exit
+            endselect
 
             !
             ! Write the source line
@@ -234,13 +273,13 @@ end subroutine handle_template
 !
 ! Arguments:
 !     lun            LU-number of the processed source file
+!     lunusecaller   LU-number of the file for use statements in caller
 !     tmpl_use       Current source line, the use statement
-!     in_template    True if nested template - hack!
 !
-subroutine handle_template_usage( lun, tmpl_use, in_template )
+subroutine handle_template_usage( lun, lunusecaller, tmpl_use )
     integer, intent(in)          :: lun
+    integer, intent(in)          :: lunusecaller
     character(len=*), intent(in) :: tmpl_use
-    logical, intent(in)          :: in_template
 
     character(len=1)             :: dummy
     character(len=100)           :: template_name
@@ -250,7 +289,6 @@ subroutine handle_template_usage( lun, tmpl_use, in_template )
     !
     ! For the moment: ignore the substution list
     !
-    write( lunout, * ) 'USE_TEMPLATE:', trim(tmpl_use), ' -- ', in_template
     read( tmpl_use, * ) dummy, template_name
 
     !
@@ -284,21 +322,13 @@ subroutine handle_template_usage( lun, tmpl_use, in_template )
     ! For the moment: copy the contents, if any, of the "use" intermediate template file
     ! - to the include file
     !
-    ! Quick hack: nested templates require more handling!
-    !
-    write(*,*) 'In template: ', in_template, lunincl
-    if ( .not. in_template ) then
-        write( lunincl, '(a)' ) 'INCLUDE:'
-        call copy_temp_file( lunuse, lunincl )
-    endif
+    call copy_temp_file( lunuse, lunusecaller )
 
     !
     ! For the moment: copy the "definition" intermediate template file
     ! - to the processed source file
     !
-    write( lun, '(a,i0)' ) 'DEFINITION:', lun
     call copy_temp_file( lundef, lun )
-    write(*,*) 'template usage done'
 end subroutine handle_template_usage
 
 ! copy_temp_file --
