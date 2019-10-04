@@ -19,6 +19,10 @@ program template_preproc
     integer            :: includeno
     logical            :: in_definition, in_module, has_contains
 
+    type substitution
+        character(len=:), allocatable :: source
+        character(len=:), allocatable :: target
+    end type substitution
 
     !
     ! Open the source file and scan it for "templates"
@@ -93,38 +97,6 @@ program template_preproc
     enddo
 contains
 
-! starts_width --
-!     Determine if a line starts with a certain word
-!
-! Arguments:
-!     line              Line to be examined
-!     word              Word that may be the first
-!
-logical function starts_with( line, word )
-     character(len=*), intent(in) :: line
-     character(len=*), intent(in) :: word
-
-     character(len=len(word)+1)   :: first_word
-     character(len=len(word)+1)   :: second_word
-     integer                      :: ierr
-
-     !
-     ! If only one word ...
-     !
-     read( word, *, iostat = ierr ) first_word, second_word
-     if ( ierr /= 0 ) then
-         first_word = '-----'
-         read( line, *, iostat = ierr ) first_word
-
-         starts_with = first_word == word .and. ierr == 0
-     else
-         first_word = '-----'
-         read( line, *, iostat = ierr ) first_word, second_word
-
-         starts_with = (trim(first_word) // ' ' // trim(second_word)) == word .and. ierr == 0
-     endif
-end function starts_with
-
 ! first_word --
 !     Read the first word from a line
 !
@@ -192,6 +164,7 @@ subroutine handle_template( lun, tmpl_start )
     !
     do
         read( lun, '(a)', iostat = ierr ) srcline
+        write(*,*) ierr, trim(srcline)
         if ( ierr /=0 ) then
             exit
         endif
@@ -277,19 +250,27 @@ end subroutine handle_template
 !     tmpl_use       Current source line, the use statement
 !
 subroutine handle_template_usage( lun, lunusecaller, tmpl_use )
-    integer, intent(in)          :: lun
-    integer, intent(in)          :: lunusecaller
-    character(len=*), intent(in) :: tmpl_use
+    integer, intent(in)             :: lun
+    integer, intent(in)             :: lunusecaller
+    character(len=*), intent(inout) :: tmpl_use
 
     character(len=1)             :: dummy
     character(len=100)           :: template_name
     integer                      :: ierr1, ierr2, ierr3, lunuse, luncont, lundef
     logical                      :: exist1, exist2, exist3
 
+    type(substitution), dimension(:), allocatable :: pair
+
     !
-    ! For the moment: ignore the substution list
+    ! For the moment: ignore the substitution list
     !
     read( tmpl_use, * ) dummy, template_name
+
+    !
+    ! Parse the substitution list - if any
+    !
+    call parse_substitutions( tmpl_use, pair )
+    write(*,*) 'Pairs: ', size(pair)
 
     !
     ! The template files must exist
@@ -357,5 +338,69 @@ subroutine copy_temp_file( luninput, lunoutput )
     enddo
 
 end subroutine copy_temp_file
+
+! parse_substitutions --
+!     Parse the list of substitution pairs
+!
+subroutine parse_substitutions( srcline, pair )
+    character(len=*), intent(inout)                            :: srcline
+    type(substitution), dimension(:), allocatable, intent(out) :: pair
+
+    type(substitution)                                         :: new_pair
+    integer                                                    :: k, pos
+    character(len=80)                                          :: string
+
+    allocate( pair(0) )
+
+    k = index( srcline, '!' )
+    if ( k > 0 ) then
+        srcline(k:) = ' '
+    endif
+
+    pos = 1
+    do
+         k = index( srcline(pos:), ',' )
+         write(*,*) k, trim(srcline(pos:))
+
+         if ( k == 0 ) then
+             exit
+         endif
+
+         pos = pos + k
+
+         k = index( srcline(pos:), '=>' )
+
+         if ( k == 0 ) then
+             write(*,*) 'Error in use_template line -- "a => b" substitution malformed'
+             exit
+         endif
+
+         !
+         ! We need this substring - it is the substitution string
+         !
+         k = pos + k - 1
+         new_pair%target = trim(adjustl(srcline(pos:k-1)))
+
+         pos = k + 2
+
+         read( srcline(pos:), *, iostat = ierr ) string
+         new_pair%source = trim(string)
+         write(*,*) '>>', trim(srcline(pos:)), '<<  -- >>', new_pair%source, '<<'
+
+         if ( ierr /= 0 ) then
+             write(*,*) 'Error in use_template line -- "a => b" substitution malformed'
+             exit
+         endif
+
+         !
+         ! Add to the list
+         !
+         pair = [pair, new_pair]
+     enddo
+
+     do k = 1,size(pair)
+         write(*,*) k, pair(k)%source, '-- ', pair(k)%target
+     enddo
+end subroutine parse_substitutions
 
 end program template_preproc
