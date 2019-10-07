@@ -11,6 +11,7 @@
 !     TODO: starts_with() -> first_word()
 !
 program template_preproc
+    use string_operations
     implicit none
 
     character(len=200) :: srcline
@@ -18,11 +19,7 @@ program template_preproc
     integer            :: ierr, lun, lunout, lunincl, luntemp
     integer            :: includeno
     logical            :: in_definition, in_module, has_contains
-
-    type substitution
-        character(len=:), allocatable :: source
-        character(len=:), allocatable :: target
-    end type substitution
+    type(pair), dimension(:), allocatable :: substitution
 
     !
     ! Open the source file and scan it for "templates"
@@ -70,7 +67,7 @@ program template_preproc
                 if ( .not. has_contains ) then
                     write( lunout, '(a)' ) 'contains ! added'
                 endif
-                call copy_temp_file( luntemp, lunout )
+                call copy_temp_file( luntemp, lunout, substitution )
                 write( lunout, '(a)' ) trim(srcline)
 
             case( 'contains' )
@@ -81,7 +78,7 @@ program template_preproc
                 !
                 ! Do we have a use_template statement? If so, handle it separately
                 !
-                call handle_template_usage( lunout, lunincl, srcline )
+                call handle_template_usage( lunout, lunincl, srcline, substitution )
 
             case( 'template' )
                 !
@@ -148,6 +145,7 @@ subroutine handle_template( lun, tmpl_start )
     character(len=40)            :: template_name
     integer                      :: ierr, lunuse, luncont, lundef
     logical                      :: in_definition, in_type
+    type(pair), dimension(:), allocatable :: substitution
 
     write(*,*) trim(tmpl_start)
     read( tmpl_start, * ) dummy, template_name
@@ -190,7 +188,7 @@ subroutine handle_template( lun, tmpl_start )
                     cycle
 
                 case( "use_template" )
-                    call handle_template_usage( lundef, lunuse, srcline )
+                    call handle_template_usage( lundef, lunuse, srcline, substitution )
                     cycle
 
                 case( "type" )
@@ -221,7 +219,7 @@ subroutine handle_template( lun, tmpl_start )
         else
             select case( first_word(srcline) )
                 case( "use_template" )
-                    call handle_template_usage( lundef, lunuse, srcline )
+                    call handle_template_usage( lundef, lunuse, srcline, substitution )
                     cycle
 
                 case( "endtemplate" )
@@ -248,18 +246,18 @@ end subroutine handle_template
 !     lun            LU-number of the processed source file
 !     lunusecaller   LU-number of the file for use statements in caller
 !     tmpl_use       Current source line, the use statement
+!     substitution   List of substitution
 !
-subroutine handle_template_usage( lun, lunusecaller, tmpl_use )
-    integer, intent(in)             :: lun
-    integer, intent(in)             :: lunusecaller
-    character(len=*), intent(inout) :: tmpl_use
+subroutine handle_template_usage( lun, lunusecaller, tmpl_use, substitution )
+    integer, intent(in)                   :: lun
+    integer, intent(in)                   :: lunusecaller
+    character(len=*), intent(inout)       :: tmpl_use
+    type(pair), dimension(:), allocatable :: substitution
 
     character(len=1)             :: dummy
     character(len=100)           :: template_name
     integer                      :: ierr1, ierr2, ierr3, lunuse, luncont, lundef
     logical                      :: exist1, exist2, exist3
-
-    type(substitution), dimension(:), allocatable :: pair
 
     !
     ! For the moment: ignore the substitution list
@@ -269,8 +267,8 @@ subroutine handle_template_usage( lun, lunusecaller, tmpl_use )
     !
     ! Parse the substitution list - if any
     !
-    call parse_substitutions( tmpl_use, pair )
-    write(*,*) 'Pairs: ', size(pair)
+    call parse_substitutions( tmpl_use, substitution )
+    write(*,*) 'Pairs: ', size(substitution)
 
     !
     ! The template files must exist
@@ -303,13 +301,13 @@ subroutine handle_template_usage( lun, lunusecaller, tmpl_use )
     ! For the moment: copy the contents, if any, of the "use" intermediate template file
     ! - to the include file
     !
-    call copy_temp_file( lunuse, lunusecaller )
+    call copy_temp_file( lunuse, lunusecaller, substitution )
 
     !
     ! For the moment: copy the "definition" intermediate template file
     ! - to the processed source file
     !
-    call copy_temp_file( lundef, lun )
+    call copy_temp_file( lundef, lun, substitution )
 end subroutine handle_template_usage
 
 ! copy_temp_file --
@@ -318,20 +316,28 @@ end subroutine handle_template_usage
 ! Arguments:
 !     luninput          LU-number of the indicated input file
 !     lunoutput         LU-number of the destination file
+!     substitution      List of substitution pairs
 !
-subroutine copy_temp_file( luninput, lunoutput )
+subroutine copy_temp_file( luninput, lunoutput, substitution )
     integer, intent(in) :: luninput
     integer, intent(in) :: lunoutput
+    type(pair), dimension(:), intent(in), optional :: substitution
 
     integer             :: ierr
     character(len=200)  :: line
+    logical             :: replacing
 
     !!rewind( luninput, iostat = ierr ) ! Note: workaround for gfortran
 
+    replacing = present(substitution)
     do
         read( luninput, '(a)', iostat = ierr ) line
         if ( ierr /= 0 ) then
             exit
+        endif
+
+        if ( replacing ) then
+            line = replace( line, substitution )
         endif
 
         write( lunoutput, '(a)' ) trim(line)
@@ -342,15 +348,22 @@ end subroutine copy_temp_file
 ! parse_substitutions --
 !     Parse the list of substitution pairs
 !
-subroutine parse_substitutions( srcline, pair )
-    character(len=*), intent(inout)                            :: srcline
-    type(substitution), dimension(:), allocatable, intent(out) :: pair
+! Arguments:
+!     srcline            Source line with zero, one or more substitution pairs
+!     substitution       Substitutions to be applied
+!
+! TODO:
+!     Proper substitution for character, real etc.
+!
+subroutine parse_substitutions( srcline, substitution )
+    character(len=*), intent(inout)                    :: srcline
+    type(pair), dimension(:), allocatable, intent(out) :: substitution
 
-    type(substitution)                                         :: new_pair
-    integer                                                    :: k, pos
-    character(len=80)                                          :: string
+    type(pair)                                         :: new_subs
+    integer                                            :: k, pos
+    character(len=80)                                  :: string
 
-    allocate( pair(0) )
+    allocate( substitution(0) )
 
     k = index( srcline, '!' )
     if ( k > 0 ) then
@@ -379,13 +392,13 @@ subroutine parse_substitutions( srcline, pair )
          ! We need this substring - it is the substitution string
          !
          k = pos + k - 1
-         new_pair%target = trim(adjustl(srcline(pos:k-1)))
+         new_subs%replacement = construct( trim(adjustl(srcline(pos:k-1))) )
 
          pos = k + 2
 
          read( srcline(pos:), *, iostat = ierr ) string
-         new_pair%source = trim(string)
-         write(*,*) '>>', trim(srcline(pos:)), '<<  -- >>', new_pair%source, '<<'
+         new_subs%substring = "type(" // trim(string) // ")"
+         write(*,*) '>>', trim(srcline(pos:)), '<<  -- >>', new_subs%substring, '<<'
 
          if ( ierr /= 0 ) then
              write(*,*) 'Error in use_template line -- "a => b" substitution malformed'
@@ -395,12 +408,35 @@ subroutine parse_substitutions( srcline, pair )
          !
          ! Add to the list
          !
-         pair = [pair, new_pair]
+         substitution = [substitution, new_subs]
      enddo
 
-     do k = 1,size(pair)
-         write(*,*) k, pair(k)%source, '-- ', pair(k)%target
+     do k = 1,size(substitution)
+         write(*,*) k, substitution(k)%substring, '-- ', substitution(k)%replacement
      enddo
 end subroutine parse_substitutions
+
+! construct --
+!     Construct the string that should replace the original
+!
+! Arguments:
+!     string            The string on the left-hand side that should replace the original
+!                       It can indicate an intrinsic type
+!
+! TODO:
+!     Proper identification
+!
+function construct( string )
+    character(len=*), intent(in)  :: string
+    character(len=:), allocatable :: construct
+
+    if ( string(1:9) == 'character' .or. string(1:4) == 'real'    .or. &
+         string(1:7) == 'integer'   .or. string(1:7) == 'logical' ) then
+
+        construct = string
+    else
+        construct = "type(" // string // ")"
+    endif
+end function construct
 
 end program template_preproc
