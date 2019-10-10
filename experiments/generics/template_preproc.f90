@@ -59,7 +59,7 @@ program template_preproc
                 write( include_file, '(a,i0,2a)' ) '_' , includeno, '_', trim(filename)
                 open( newunit = lunincl, file = include_file )
                 write( lunout, '(a)' ) trim(srcline)
-                write( lunout, '(a,a)' ) 'include ', trim(include_file)
+                write( lunout, '(3a)' ) 'include "', trim(include_file), '"'
 
             case( 'endmodule' )
                 in_module = .false.
@@ -288,6 +288,8 @@ subroutine handle_template_usage( lun, lunusecaller, tmpl_use, substitution )
         stop
     endif
 
+    write(*,*) ">>1"
+
     luntemp = luncont ! Used with "end" statements
 
 !    if ( ierr1 /= 0 .or. ierr2 /= 0 .or. ierr3 /= 0 ) then
@@ -301,13 +303,16 @@ subroutine handle_template_usage( lun, lunusecaller, tmpl_use, substitution )
     ! For the moment: copy the contents, if any, of the "use" intermediate template file
     ! - to the include file
     !
+    write(*,*) ">>2"
     call copy_temp_file( lunuse, lunusecaller, substitution )
 
     !
     ! For the moment: copy the "definition" intermediate template file
     ! - to the processed source file
     !
+    write(*,*) ">>3"
     call copy_temp_file( lundef, lun, substitution )
+    write(*,*) ">>4"
 end subroutine handle_template_usage
 
 ! copy_temp_file --
@@ -360,7 +365,7 @@ subroutine parse_substitutions( srcline, substitution )
     type(pair), dimension(:), allocatable, intent(out) :: substitution
 
     type(pair)                                         :: new_subs
-    integer                                            :: k, pos
+    integer                                            :: k, pos, len_sub, len_repl
     character(len=80)                                  :: string
 
     allocate( substitution(0) )
@@ -409,6 +414,23 @@ subroutine parse_substitutions( srcline, substitution )
          ! Add to the list
          !
          substitution = [substitution, new_subs]
+
+         if ( new_subs%replacement(1:5) == 'type(' ) then
+             len_sub              = len_trim(new_subs%substring)
+             len_repl             = len_trim(new_subs%replacement)
+
+             new_subs%substring   = "class(" // new_subs%substring(6:len_sub)
+             new_subs%replacement = "class(" // new_subs%replacement(6:len_repl)
+
+             substitution = [substitution, new_subs]
+
+             len_sub              = len_trim(new_subs%substring)
+             len_repl             = len_trim(new_subs%replacement)
+
+             new_subs%substring   = new_subs%substring(7:len_sub-1)
+             new_subs%replacement = new_subs%replacement(7:len_repl-1)
+             substitution = [substitution, new_subs]
+         endif
      enddo
 
      do k = 1,size(substitution)
