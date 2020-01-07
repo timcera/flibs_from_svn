@@ -18,6 +18,8 @@ PROGRAMS	=	test_vectors$(EXEEXT) \
 	test_queue$(EXEEXT) \
 	test_qsortarray_template$(EXEEXT) \
 	qsort_test$(EXEEXT) \
+	test_balanced_tree$(EXEEXT) \
+	test_balanced_tree_string$(EXEEXT) \
 
 # For reasons I do not understand making the program test_mem_pool under
 # Cygwin all of a sudden invokes gcc instead of gfortran to link it.
@@ -95,6 +97,18 @@ qsort_test$(EXEEXT):	qsort_test$(OBJEXT)
 
 qsort_test$(OBJEXT):	qsort_test.f90
 	$(FC) $(FFLAGS) qsort_test.f90
+
+test_balanced_tree$(EXEEXT):	test_balanced_tree$(OBJEXT)
+	$(LD) $(LDFLAGS) test_balanced_tree$(OBJEXT)
+
+test_balanced_tree$(OBJEXT):	test_balanced_tree.f90 ../../src/datastructures/balanced_tree.f90
+	$(FC) $(FFLAGS) test_balanced_tree.f90
+
+test_balanced_tree_string$(EXEEXT):	test_balanced_tree_string$(OBJEXT)
+	$(LD) $(LDFLAGS) test_balanced_tree$(OBJEXT)
+
+test_balanced_tree_string$(OBJEXT):	test_balanced_tree_string.f90 ../../src/datastructures/balanced_tree_string.f90
+	$(FC) $(FFLAGS) test_balanced_tree.f90
 
 
 
