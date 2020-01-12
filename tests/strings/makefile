@@ -18,6 +18,7 @@ PROGRAMS	=	test_token$(EXEEXT) \
 		test_flexoutput$(EXEEXT) \
 		test_command_args$(EXEEXT) \
 		test_string_operations$(EXEEXT) \
+		test_base64$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -148,6 +149,16 @@ test_string_operations$(OBJEXT):	test_string_operations.f90 string_operations$(O
 
 test_string_operations$(EXEEXT):	test_string_operations$(OBJEXT) string_operations$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) test_string_operations$(OBJEXT) string_operations$(OBJEXT)
+
+
+base64$(OBJEXT):	../../src/strings/base64.f90
+	$(FC) $(FFLAGS) ../../src/strings/base64.f90
+
+test_base64$(OBJEXT):	test_base64.f90 base64$(OBJEXT)
+	$(FC) $(FFLAGS) test_base64.f90
+
+test_base64$(EXEEXT):	test_base64$(OBJEXT) base64$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_base64$(OBJEXT) base64$(OBJEXT)
 
 
 
