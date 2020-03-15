@@ -23,6 +23,7 @@ PROGRAMS	=	test_diff$(EXEEXT) \
 		test_newuoa$(EXEEXT) \
 		test_timing$(EXEEXT) \
 		eight_queens$(EXEEXT) \
+		test_quasirandom$(EXEEXT) \
 
 all:	$(PROGRAMS)
 
@@ -217,6 +218,16 @@ eight_queens$(OBJEXT):	eight_queens.f90 backtrack$(OBJEXT)
 
 eight_queens$(EXEEXT):	eight_queens$(OBJEXT) backtrack$(OBJEXT)
 	$(LD) $(LDFLAGS) $(LDOUTPUT) eight_queens$(OBJEXT) backtrack$(OBJEXT)
+
+
+quasirandom$(OBJEXT):	../../src/computing/quasirandom.f90
+	$(FC) $(FFLAGS) ../../src/computing/quasirandom.f90
+
+test_quasirandom$(OBJEXT):	test_quasirandom.f90 quasirandom$(OBJEXT)
+	$(FC) $(FFLAGS) test_quasirandom.f90
+
+test_quasirandom$(EXEEXT):	test_quasirandom$(OBJEXT) quasirandom$(OBJEXT)
+	$(LD) $(LDFLAGS) $(LDOUTPUT) test_quasirandom$(OBJEXT) quasirandom$(OBJEXT)
 
 
 clean:	
